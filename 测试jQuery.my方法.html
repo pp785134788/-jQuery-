@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>测试页面</title>
+    <style>
+        .active {
+            background-color: red;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: hotpink;
+            border: 1px solid #000;
+        }
+
+        .gold {
+            background-color: gold;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="button" value="按钮1" class="active" />
+    <input type="button" value="按钮2" />
+    <input type="button" value="按钮3" />
+    <input type="button" value="按钮4" disabled />
+    <div class="box" data-time='2018-06-11'>盒子1</div>
+    <div class="box" data-time='2018-12-26'>盒子2</div>
+
+    <!-- 导入自己的 jQuery 文件 -->
+    <script src="./lib/jquery.my.js"></script>
+    <!-- 导入 jQuery 文件 -->
+    <!-- <script src="./lib/jquery-1.12.4.js"></script> -->
+    <script>
+        // 功能测试
+        // 提醒：经历把查找后的 jQuery 对象保存到某个变量中，因为每次 $() 调用的时候都会重新实例一个新的 jQuery 对象
+        // 选择器和变量写法参考：
+        var $body = $('body');
+        var $input = $('input');
+        var $div = $('div');
+
+        // 功能0：$ jQuery 变量名
+        console.log('功能0：$  变量名', $);
+        console.log('功能0：jQuery 变量名', jQuery);
+
+        // 功能1：选择器查找
+        console.log("功能1：$('div)", $('div'));    // 标签名查找
+        console.log("功能1：$('.box')", $('.box'));     // 类名查找
+        console.log("功能1：$('abc')", $('abc'));      // 查找不存在的标签
+
+        // 功能2：传入匿名函数处理
+        $(function () {
+            console.log('功能2：1.jQuery入口函数，document 的 DOMContentLoaded 事件被执行了.', 'this指向', this);
+        });
+        // window 的 load 事件作为对照组 
+        window.addEventListener('load', function () {
+            console.log('功能2：2.浏览器加载事件, window 的 load 事件被执行了.', 'this指向', this);
+        });
+
+        // 功能3：传入 window, document, DOM节点 都进行 jQuery 实例对象包装
+        console.log('功能3：$(window)', $(window));
+        console.log('功能3：$(document)', $(document));
+        console.log("功能3：$(document.querySelector('input'))", $(document.querySelector('input')));
+
+
+        // 功能4：传入伪数组集合，都进行 jQuery 实例对象包装
+        console.log("功能4：$(document.querySelectorAll('input'))", $(document.querySelectorAll('input')));
+        console.log("功能4：$(document.getElementsByTagName('input'))", $(document.getElementsByTagName('input')));
+
+
+        // // ============= 模块2：类名操作 =============
+        // // debugger;
+        // $input
+        //     // 添加类 - 链式编程
+        //     .addClass('active').addClass('style')
+        //     // 删除类 - 链式编程
+        //     .removeClass('active')
+        //     // 切换类 - 链式编程
+        //     .toggleClass('active');
+
+        // // ============= 模块3：each 遍历 =============
+        // $input.each(function (index, item) {
+        //     console.log('模块3：each 遍历', index, item);
+        // });
+
+
+        // ============= 模块4：显示隐藏切换 =============
+        $div
+            // 显示
+            .hide()
+            // 隐藏
+            .show()
+            // 切换
+            .toggle()
+            .toggle()
+
+
+        // ============= 模块5：获取和设置内容和表单值 =============
+        // debugger;
+        // .val() 表单值
+        console.log("模块5.1：获取 $input.val()", $input.val());
+        console.log("模块5.1：设置 val()看页面按钮值");
+        $input.val('按钮值发生变化');
+
+        // .text() text内容
+        console.log("模块5.3：获取 $div.text()", $div.text());
+        console.log("模块5.3：设置 text()看页面div");
+        $div.text('<a href="http://github.com/Megasu">点击跳转</a>');
+
+        // .html() html内容
+        console.log("模块5.2：获取 $div.html()", $div.html());
+        console.log("模块5.2：设置 html()看页面div");
+        $div.html('<a href="http://github.com/Megasu">点击跳转</a>');
+
+
+        // ============= 模块6：筛选查找方法 =============
+        // .eq()
+        console.log("模块6：$div.eq(0)", $div.eq(0));
+        console.log("模块6：$div.eq(-1)", $div.eq(-1));
+
+        // .parent()  .children()
+        console.log("模块6：$div.parent()", $div.parent());
+        console.log("模块6：$body.children()", $body.children());
+
+        // .siblings()  .find()
+        console.log("模块6：$input.eq(1).siblings()", $input.eq(1).siblings());
+        console.log("模块6：$body.find('input')", $body.find('input'));
+
+
+        // ============= 模块7：筛选查找方法 =============
+        // on('类型',函数) --  7.1 普通绑定
+        $input.on('click', function (event) {
+            console.log('模块7：普通事件 this 指向', this, 'event 事件对象', event);
+            // jQuery 排他思想
+            $(this).addClass('active').siblings().removeClass('active');
+        });
+
+        // on('类型','选择器',函数) --  7.2 事件委派绑定
+        $body.on('click', 'div', function (event) {
+            console.log('模块7：事件委派 this 指向', this, 'event 事件对象', event);
+            // jQuery 排他思想
+            $(this).addClass('gold').siblings().removeClass('gold');
+        });
+
+        // off('类型',函数) --  7.3 普通解绑
+        var clickFn1 = function () {
+            alert('你点击了元素，点击后解绑事件');
+            //  7.3.2 解绑用 off
+            $input.off('click', clickFn1);
+        }
+        // 7.3.1 绑定用 on
+        $input.on('click', clickFn1);
+
+        // on('类型','选择器',函数) --  7.4 事件委派解绑 - 暂未实现
+
+
+        // ============= 模块8：属性操作 =============
+        // .removeProp()  移除属性
+        // debugger;
+        $input.removeProp('disabled');
+
+        // .prop() 获取属性
+        // 功能1：测试单属性设置
+        $input.eq(0)
+            // 值为字符串类型
+            .prop('title', '提示提示')
+            // 值为数值类型
+            .prop('value', 66);
+
+        // 功能2：测试多属性设置
+        $input.eq(1).prop({
+            // 修改值
+            value: 77,
+            // 修改按钮的禁用状态
+            disabled: true,
+            // 类名需要写成 className
+            className: ''
+        });
+        // 功能3：单属性获取
+        console.log("模块8：$input.prop('disabled')", $input.prop('disabled'));
+        console.log("模块8：$div.prop('data-time')", $div.prop('data-time'));
+
+
+
+
+        // .removeAttr()  移除属性
+        $div.eq(-1).removeAttr('style');
+
+        // .attr() 获取属性
+        // 功能1：测试单属性设置
+        $div.eq(-1)
+            // 值为字符串类型
+            .attr('id', 'box')
+            // 值为数值类型
+            .attr('title', 6666666);
+
+        // 功能2：测试多属性设置
+        $div.eq(1).attr({
+            // 类名可以写成 class
+            class: 'box gold'
+        });
+        // 功能3：单属性获取
+        console.log("模块8：$input.attr('disabled')", $input.attr('disabled'));
+        console.log("模块8：$div.attr('data-time')", $div.attr('data-time'));
+
+        // ============= 模块9：行内样式操作 =============
+        // 功能1：获取样式
+        console.log("模块9：$div.css('width')", $div.css('width'));
+
+        // 功能2：单样式属性设置
+        $div
+            // 测试纯数字
+            .css('height', 100)
+            // 测试数字+字符串
+            .css('width', '1000px')
+            // 测试纯字符串
+            .css('text-align', 'center');
+
+        // 功能3：多样式属性设置
+        $div
+            // 链式编程
+            .eq(0)
+            // 多属性操作
+            .css({
+                // 测试纯数字
+                width: 200,
+                height: 200,
+                // 测试数字+字符串
+                fontSize: '30px',
+                // 测试存字符串
+                float: 'left',
+                // 测试字符串属性
+                'line-height': 5,
+            });
+    </script>
+</body>
+
+</html>
